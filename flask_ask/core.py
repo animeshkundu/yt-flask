@@ -56,6 +56,7 @@ from . import models
 
 
 _converters = {'date': to_date, 'time': to_time, 'timedelta': to_timedelta}
+IS_PY3 = sys.version_info[0] == 3
 
 
 class Ask(object):
@@ -828,8 +829,7 @@ class Ask(object):
         else:
             raise NotImplementedError('Intent "{}" not found and no default intent specified.'.format(intent.name))
 
-        PY3 = sys.version_info[0] == 3
-        if PY3:
+        if IS_PY3:
             argspec = inspect.getfullargspec(view_func)
         else:
             argspec = inspect.getargspec(view_func)
@@ -844,7 +844,11 @@ class Ask(object):
         # calbacks for on_playback requests are optional
         view_func = self._intent_view_funcs.get(player_request_type, lambda: None)
 
-        argspec = inspect.getargspec(view_func)
+        if IS_PY3:
+            argspec = inspect.getfullargspec(view_func)
+        else:
+            argspec = inspect.getargspec(view_func)
+
         arg_names = argspec.args
         arg_values = self._map_params_to_view_args(player_request_type, arg_names)
 
@@ -858,7 +862,11 @@ class Ask(object):
         else:
             raise NotImplementedError('Request type "{}" not found and no default view specified.'.format(purchase_request_type)) 
 
-        argspec = inspect.getargspec(view_func)
+        if IS_PY3:
+            argspec = inspect.getfullargspec(view_func)
+        else:
+            argspec = inspect.getargspec(view_func)
+
         arg_names = argspec.args
         arg_values = self._map_params_to_view_args(purchase_request_type, arg_names)
 
