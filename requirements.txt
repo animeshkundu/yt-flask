@@ -4,5 +4,5 @@ cryptography
 pyOpenSSL
 PyYAML
 six
-Werkzeug
+Werkzeug==2.3.7
 cachelib
