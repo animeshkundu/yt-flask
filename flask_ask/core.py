@@ -8,9 +8,9 @@ from functools import wraps, partial
 
 import aniso8601
 from cachelib.file import FileSystemCache
-from werkzeug.local import LocalProxy, LocalStack
+from werkzeug.local import LocalProxy
 from jinja2 import BaseLoader, ChoiceLoader, TemplateNotFound
-from flask import current_app, json, request as flask_request, _app_ctx_stack
+from flask import current_app, json, request as flask_request, g
 
 from . import verifier, logger
 from .convert import to_date, to_time, to_timedelta
@@ -56,7 +56,6 @@ from . import models
 
 
 _converters = {'date': to_date, 'time': to_time, 'timedelta': to_timedelta}
-IS_PY3 = sys.version_info[0] == 3
 
 
 class Ask(object):
@@ -525,43 +524,43 @@ class Ask(object):
 
     @property
     def request(self):
-        return getattr(_app_ctx_stack.top, '_ask_request', None)
+        return getattr(g, '_ask_request', None)
 
     @request.setter
     def request(self, value):
-        _app_ctx_stack.top._ask_request = value
+        g._ask_request = value
 
     @property
     def session(self):
-        return getattr(_app_ctx_stack.top, '_ask_session', models._Field())
+        return getattr(g, '_ask_session', models._Field())
 
     @session.setter
     def session(self, value):
-        _app_ctx_stack.top._ask_session = value
+        g._ask_session = value
 
     @property
     def version(self):
-        return getattr(_app_ctx_stack.top, '_ask_version', None)
+        return getattr(g, '_ask_version', None)
 
     @version.setter
     def version(self, value):
-        _app_ctx_stack.top._ask_version = value
+        g._ask_version = value
 
     @property
     def context(self):
-        return getattr(_app_ctx_stack.top, '_ask_context', None)
+        return getattr(g, '_ask_context', None)
 
     @context.setter
     def context(self, value):
-        _app_ctx_stack.top._ask_context = value
+        g._ask_context = value
 
     @property
     def convert_errors(self):
-        return getattr(_app_ctx_stack.top, '_ask_convert_errors', None)
+        return getattr(g, '_ask_convert_errors', None)
 
     @convert_errors.setter
     def convert_errors(self, value):
-        _app_ctx_stack.top._ask_convert_errors = value
+        g._ask_convert_errors = value
 
     @property
     def current_stream(self):
@@ -645,12 +644,7 @@ class Ask(object):
         environ['CONTENT_TYPE'] = 'application/json'
         environ['CONTENT_LENGTH'] = len(body)
         
-        PY3 = sys.version_info[0] == 3
-        
-        if PY3:
-            environ['wsgi.input'] = io.StringIO(body)
-        else:
-            environ['wsgi.input'] = io.BytesIO(body)
+        environ['wsgi.input'] = io.StringIO(body)
 
         # Start response is a required callback that must be passed when
         # the application is invoked. It is used to set HTTP status and
@@ -829,10 +823,7 @@ class Ask(object):
         else:
             raise NotImplementedError('Intent "{}" not found and no default intent specified.'.format(intent.name))
 
-        if IS_PY3:
-            argspec = inspect.getfullargspec(view_func)
-        else:
-            argspec = inspect.getargspec(view_func)
+        argspec = inspect.getfullargspec(view_func)
             
         arg_names = argspec.args
         arg_values = self._map_params_to_view_args(intent.name, arg_names)
@@ -844,10 +835,7 @@ class Ask(object):
         # calbacks for on_playback requests are optional
         view_func = self._intent_view_funcs.get(player_request_type, lambda: None)
 
-        if IS_PY3:
-            argspec = inspect.getfullargspec(view_func)
-        else:
-            argspec = inspect.getargspec(view_func)
+        argspec = inspect.getfullargspec(view_func)
 
         arg_names = argspec.args
         arg_values = self._map_params_to_view_args(player_request_type, arg_names)
@@ -862,10 +850,7 @@ class Ask(object):
         else:
             raise NotImplementedError('Request type "{}" not found and no default view specified.'.format(purchase_request_type)) 
 
-        if IS_PY3:
-            argspec = inspect.getfullargspec(view_func)
-        else:
-            argspec = inspect.getargspec(view_func)
+        argspec = inspect.getfullargspec(view_func)
 
         arg_names = argspec.args
         arg_values = self._map_params_to_view_args(purchase_request_type, arg_names)

@@ -2,8 +2,8 @@ import os
 import base64
 import posixpath
 from datetime import datetime
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.request import urlopen
+from urllib.parse import urlparse
+from urllib.request import urlopen
 
 from OpenSSL import crypto
 

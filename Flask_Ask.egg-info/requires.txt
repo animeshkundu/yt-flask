@@ -1,0 +1,10 @@
+Flask<4,>=3.0
+Werkzeug<4,>=3.0
+cryptography>=42
+pyOpenSSL>=24
+aniso8601>=9
+PyYAML>=6
+cachelib>=0.12
+
+[dev]
+flake8

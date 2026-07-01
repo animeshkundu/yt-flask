@@ -8,15 +8,15 @@ from . import logger
 
 _DATE_PATTERNS = {
     # "today", "tomorrow", "november twenty-fifth": 2015-11-25
-    '^\d{4}-\d{2}-\d{2}$': '%Y-%m-%d',
+    r'^\d{4}-\d{2}-\d{2}$': '%Y-%m-%d',
     # "this week", "next week": 2015-W48
-    '^\d{4}-W\d{2}$': '%Y-W%U-%w',
+    r'^\d{4}-W\d{2}$': '%Y-W%U-%w',
     # "this weekend": 2015-W48-WE
-    '^\d{4}-W\d{2}-WE$': '%Y-W%U-WE-%w',
+    r'^\d{4}-W\d{2}-WE$': '%Y-W%U-WE-%w',
     # "this month": 2015-11
-    '^\d{4}-\d{2}$': '%Y-%m',
+    r'^\d{4}-\d{2}$': '%Y-%m',
     # "next year": 2016
-    '^\d{4}$': '%Y',
+    r'^\d{4}$': '%Y',
 }
 
 
@@ -48,8 +48,8 @@ def to_time(amazon_time):
     try:
         return aniso8601.parse_time(amazon_time)
     except ValueError as e:
-        logger.warn("ValueError for amazon_time '{}'.".format(amazon_time))
-        logger.warn("ValueError message: {}".format(e.message))
+        logger.warning("ValueError for amazon_time '{}'.".format(amazon_time))
+        logger.warning("ValueError message: {}".format(str(e)))
         return None
 
 

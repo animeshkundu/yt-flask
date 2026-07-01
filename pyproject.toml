@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Flask-Ask"
+version = "0.9.9"
+description = "Rapid Alexa Skills Kit Development for Amazon Echo Devices in Python"
+requires-python = ">=3.10"
+dependencies = [
+    "Flask>=3.0,<4",
+    "Werkzeug>=3.0,<4",
+    "cryptography>=42",
+    "pyOpenSSL>=24",
+    "aniso8601>=9",
+    "PyYAML>=6",
+    "cachelib>=0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["flask_ask*"]

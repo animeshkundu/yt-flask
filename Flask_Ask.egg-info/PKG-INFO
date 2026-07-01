@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: Flask-Ask
+Version: 0.9.9
+Summary: Rapid Alexa Skills Kit Development for Amazon Echo Devices in Python
+Author: Animesh Kundu
+Platform: any
+Requires-Python: >=3.10
+Requires-Dist: Flask<4,>=3.0
+Requires-Dist: Werkzeug<4,>=3.0
+Requires-Dist: cryptography>=42
+Requires-Dist: pyOpenSSL>=24
+Requires-Dist: aniso8601>=9
+Requires-Dist: PyYAML>=6
+Requires-Dist: cachelib>=0.12
+Provides-Extra: dev
+Requires-Dist: flake8; extra == "dev"
+Dynamic: author
+Dynamic: platform
