@@ -8,7 +8,7 @@ from functools import wraps, partial
 
 import aniso8601
 from cachelib.file import FileSystemCache
-from werkzeug.local import LocalProxy, LocalStack
+from werkzeug.local import LocalProxy
 from jinja2 import BaseLoader, ChoiceLoader, TemplateNotFound
 from flask import current_app, json, request as flask_request, _app_ctx_stack
 
@@ -52,7 +52,7 @@ convert_errors = LocalProxy(lambda: find_ask().convert_errors)
 current_stream = LocalProxy(lambda: find_ask().current_stream)
 stream_cache = LocalProxy(lambda: find_ask().stream_cache)
 
-from . import models
+from . import models  # noqa: E402
 
 
 _converters = {'date': to_date, 'time': to_time, 'timedelta': to_timedelta}
@@ -734,7 +734,7 @@ class Ask(object):
                 # in ISO8601 format
                 try:
                     return datetime.utcfromtimestamp(timestamp)
-                except:
+                except Exception:
                     # relax the timestamp a bit in case it was sent in millis
                     return datetime.utcfromtimestamp(timestamp/1000)
 
@@ -747,7 +747,7 @@ class Ask(object):
         fresh_stream.__dict__.update(self._from_directive())
 
         context_info = self._from_context()
-        if context_info != None:
+        if context_info is not None:
             fresh_stream.__dict__.update(context_info)
 
         self.current_stream = fresh_stream
@@ -874,7 +874,6 @@ class Ask(object):
         return partial(view_func, *arg_values)
 
     def _get_slot_value(self, slot_object):
-        slot_name = slot_object.name
         slot_value = getattr(slot_object, 'value', None)
         resolutions = getattr(slot_object, 'resolutions', None)
 

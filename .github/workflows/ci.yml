@@ -30,7 +30,7 @@ jobs:
           python -m pip install -e . pytest ruff
 
       - name: Run Ruff
-        run: ruff check tests
+        run: ruff check flask_ask tests
 
       - name: Run pytest
         run: pytest -q

@@ -15,6 +15,9 @@ from flask import Flask
 from flask_ask import Ask, question
 
 app = Flask(__name__)
+# Disable Alexa request signature verification for local development.
+# IMPORTANT: remove this line (or set it to True) in production.
+app.config["ASK_VERIFY_REQUESTS"] = False
 ask = Ask(app, "/")
 
 @ask.launch
@@ -36,6 +39,6 @@ python -m pip install -e . pytest ruff
 Run lint and tests:
 
 ```bash
-ruff check tests
+ruff check flask_ask tests
 pytest -q
 ```
