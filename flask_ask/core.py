@@ -15,7 +15,7 @@ from flask import current_app, json, request as flask_request, g
 from . import verifier, logger
 from .convert import to_date, to_time, to_timedelta
 from .cache import top_stream, set_stream
-import collections
+import collections.abc
 
 
 def find_ask():
@@ -564,7 +564,6 @@ class Ask(object):
 
     @property
     def current_stream(self):
-        #return getattr(_app_ctx_stack.top, '_ask_current_stream', models._Field())
         user = self._get_user()
         if user:
             stream = top_stream(self.stream_cache, user)
@@ -644,7 +643,7 @@ class Ask(object):
         environ['CONTENT_TYPE'] = 'application/json'
         environ['CONTENT_LENGTH'] = len(body)
         
-        environ['wsgi.input'] = io.StringIO(body)
+        environ['wsgi.input'] = io.BytesIO(body.encode('utf-8'))
 
         # Start response is a required callback that must be passed when
         # the application is invoked. It is used to set HTTP status and
@@ -855,7 +854,7 @@ class Ask(object):
         arg_names = argspec.args
         arg_values = self._map_params_to_view_args(purchase_request_type, arg_names)
 
-        print('_map_purchase_request_to_func', arg_names, arg_values, view_func, purchase_request_type)
+        logger.debug('_map_purchase_request_to_func: arg_names=%s, arg_values=%s, view_func=%s, type=%s', arg_names, arg_values, view_func, purchase_request_type)
         return partial(view_func, *arg_values)
 
     def _get_slot_value(self, slot_object):
@@ -901,7 +900,7 @@ class Ask(object):
             if arg_value is None or arg_value == "":
                 if arg_name in default:
                     default_value = default[arg_name]
-                    if isinstance(default_value, collections.Callable):
+                    if isinstance(default_value, collections.abc.Callable):
                         default_value = default_value()
                     arg_value = default_value
             elif arg_name in convert:
